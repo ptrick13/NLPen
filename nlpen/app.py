@@ -2,6 +2,7 @@
 
 import logging
 import os
+import threading
 
 import customtkinter
 from CTkMessagebox import CTkMessagebox
@@ -152,19 +153,41 @@ class App:
         )
 
     def _analyze(self) -> None:
-        self._btn_analyze.configure(
-            text="Bitte warten …", fg_color=self._btn_upload.cget("fg_color")
-        )
-        self._root.update()
+        self._btn_analyze.configure(state="disabled")
+        self._btn_upload.configure(state="disabled")
+        self._spinner_running = True
+        self._spinner_dots = 0
+        self._animate_spinner()
+        threading.Thread(target=self._run_analysis, daemon=True).start()
+
+    def _animate_spinner(self) -> None:
+        if not self._spinner_running:
+            return
+        dots = "." * (self._spinner_dots % 4)
+        self._btn_analyze.configure(text=f"Analysiere{dots}")
+        self._spinner_dots += 1
+        self._root.after(500, self._animate_spinner)
+
+    def _run_analysis(self) -> None:
         try:
             analyzer = self._build_analyzer()
             analyzer.run(self._sentences, self._pdf_path)
-            self._show_success()
+            self._root.after(0, self._on_analysis_done)
         except Exception as exc:
             logger.exception("Analysis failed")
-            self._show_error(str(exc))
-        finally:
-            self._btn_analyze.configure(text="Erneut herunterladen")
+            self._root.after(0, lambda: self._on_analysis_failed(str(exc)))
+
+    def _on_analysis_done(self) -> None:
+        self._spinner_running = False
+        self._btn_analyze.configure(text="Erneut herunterladen", state="normal")
+        self._btn_upload.configure(state="normal")
+        self._show_success()
+
+    def _on_analysis_failed(self, message: str) -> None:
+        self._spinner_running = False
+        self._btn_analyze.configure(text="PDF analysieren & downloaden", state="normal")
+        self._btn_upload.configure(state="normal")
+        self._show_error(message)
 
     # ------------------------------------------------------------------
     # Analyzer factory
