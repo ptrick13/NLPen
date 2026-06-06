@@ -1,6 +1,7 @@
-# Core GUI
-customtkinter==5.2.0
-CTkMessagebox==2.5
+# Web framework
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+python-multipart==0.0.9
 
 # PDF processing
 PyMuPDF==1.22.5

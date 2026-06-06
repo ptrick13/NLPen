@@ -1,8 +1,8 @@
-"""Entry point for the NLPen PDF analyser application."""
+"""Entry point: starts the NLPen web server."""
 
 import logging
 
-from nlpen.app import App
+import uvicorn
 
 logging.basicConfig(
     level=logging.INFO,
@@ -10,4 +10,4 @@ logging.basicConfig(
 )
 
 if __name__ == "__main__":
-    App().run()
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=False)
