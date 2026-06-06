@@ -74,7 +74,9 @@ class SentimentAnalyzer(BaseAnalyzer):
         highlight_sentences(results.negative, doc, COLOR_NEGATIVE)
         add_legend(doc, SENTIMENT_LEGEND_TEXT, SENTIMENT_LEGEND_ITEMS, SENTIMENT_LEGEND_BASE_X_FROM_RIGHT)
 
-    @staticmethod
-    def _clean(sentence: str) -> str:
+    def _clean(self, sentence: str) -> str:
         sentence = PAGE_MARKER_PATTERN.sub("", sentence)
-        return re.sub(r"\n", "", sentence)
+        sentence = re.sub(r"\n", "", sentence)
+        tokenizer = self._classifier.tokenizer
+        tokens = tokenizer(sentence, truncation=True, max_length=512, return_tensors=None)
+        return tokenizer.decode(tokens["input_ids"], skip_special_tokens=True)
