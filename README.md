@@ -99,6 +99,18 @@ Then open [http://localhost:8000](http://localhost:8000) in your browser.
 
 ---
 
+## Demo
+
+Interface with an uploaded PDF and one analysis mode selected:
+
+![Interface](static/interface.png)
+
+Annotated output showing the most informative sentences highlighted in yellow:
+
+![Result](static/result.png)
+
+---
+
 ## Bachelor's thesis context
 
 This project was developed as part of my Bachelor's thesis on *combined NLP analysis of German documents*. The thesis explored how extractive summarisation, sentiment classification, and named entity recognition can be combined into a single document-annotation workflow accessible to non-technical users.
@@ -109,14 +121,14 @@ This project was developed as part of my Bachelor's thesis on *combined NLP anal
 
 | Library | Role | Version |
 |---------|------|---------|
-| [FastAPI](https://fastapi.tiangolo.com) | Web framework & REST API | 0.111.0 |
-| [Uvicorn](https://www.uvicorn.org) | ASGI server | 0.29.0 |
-| [PyMuPDF](https://pymupdf.readthedocs.io) | PDF reading & annotation | 1.22.5 |
-| [SpaCy](https://spacy.io) | German lemmatisation & stopwords | 3.6.0 |
-| [scikit-learn](https://scikit-learn.org) | TF-IDF vectorisation | 1.3.0 |
-| [NetworkX](https://networkx.org) | TextRank / PageRank graph | 3.1 |
-| [Transformers](https://huggingface.co/docs/transformers) | XLM-RoBERTa sentiment | 4.31.0 |
-| [Flair](https://flairnlp.github.io) | German NER sequence tagger | 0.12.2 |
+| [FastAPI](https://fastapi.tiangolo.com) | Web framework & REST API | 0.136.3 |
+| [Uvicorn](https://www.uvicorn.org) | ASGI server | 0.49.0 |
+| [PyMuPDF](https://pymupdf.readthedocs.io) | PDF reading & annotation | 1.27.2 |
+| [SpaCy](https://spacy.io) | German lemmatisation & stopwords | 3.8.14 |
+| [scikit-learn](https://scikit-learn.org) | TF-IDF vectorisation | 1.9.0 |
+| [NetworkX](https://networkx.org) | TextRank / PageRank graph | 3.6.1 |
+| [Transformers](https://huggingface.co/docs/transformers) | XLM-RoBERTa sentiment | 4.57.6 |
+| [Flair](https://flairnlp.github.io) | German NER sequence tagger | 0.15.1 |
 | [textblob-de](https://textblob-de.readthedocs.io) | German sentence tokenisation | 0.4.3 |
 
 ---
