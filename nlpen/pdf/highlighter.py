@@ -1,6 +1,7 @@
 """PDF annotation helpers: sentence highlighting, entity highlighting, legends, saving."""
 
 import logging
+from datetime import datetime
 from pathlib import Path
 
 import fitz
@@ -67,7 +68,8 @@ def add_legend(
 def save_annotated(doc: fitz.Document, source_path: str, suffix: str) -> str:
     """Save the annotated document next to the source file and return the new path."""
     p = Path(source_path)
-    output_path = p.with_name(f"{p.stem}_{suffix}.pdf")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_path = p.with_name(f"{p.stem}_{suffix}_{timestamp}.pdf")
     doc.save(str(output_path))
     logger.info("Saved annotated PDF: %s", output_path)
     return str(output_path)
