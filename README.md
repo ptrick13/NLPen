@@ -103,11 +103,11 @@ Then open [http://localhost:8000](http://localhost:8000) in your browser.
 
 Interface with an uploaded PDF and one analysis mode selected:
 
-![Interface](static/interface.png)
+<img src="static/interface.png" width="60%">
 
 Annotated output showing the most informative sentences highlighted in yellow:
 
-![Result](static/result.png)
+<img src="static/result.png" width="60%">
 
 ---
 
