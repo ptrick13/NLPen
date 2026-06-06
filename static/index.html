@@ -15,11 +15,23 @@
       --accent: #3d7fff;
       --accent-hover: #5590ff;
       --text: #e8e8e8;
-      --text-muted: #777;
+      --text-muted: #888;
       --border: #2a2a2a;
       --error: #ff5555;
       --success: #4caf7d;
       --radius: 14px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
     }
 
     body {
@@ -70,6 +82,10 @@
     .upload-area.dragover {
       border-color: var(--accent);
       background: rgba(61, 127, 255, 0.04);
+    }
+    .upload-area:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
     .upload-icon {
       width: 34px;
@@ -129,7 +145,7 @@
       -webkit-appearance: none;
       width: 17px;
       height: 17px;
-      border: 1.5px solid #3a3a3a;
+      border: 1.5px solid #666;
       border-radius: 4px;
       background: transparent;
       cursor: pointer;
@@ -153,6 +169,10 @@
       border-top: none;
       border-left: none;
       transform: rotate(40deg);
+    }
+    .checkbox-row input[type="checkbox"]:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
     }
     .checkbox-row input[type="checkbox"]:disabled {
       opacity: 0.3;
@@ -183,6 +203,7 @@
       margin-bottom: 10px;
     }
     .btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+    .btn-primary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
 
     .download-link {
@@ -203,6 +224,7 @@
       margin-bottom: 10px;
     }
     .download-link:hover { background: rgba(76, 175, 125, 0.08); }
+    .download-link:focus-visible { outline: 2px solid var(--success); outline-offset: 2px; }
 
     .error-msg {
       display: none;
@@ -213,6 +235,20 @@
     }
 
     input[type="file"] { display: none; }
+
+    fieldset {
+      border: none;
+      padding: 0;
+      margin: 0;
+    }
+    fieldset legend.options-label {
+      float: left;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    fieldset .checkboxes {
+      clear: left;
+    }
   </style>
 </head>
 <body>
@@ -223,9 +259,12 @@
       Die annotierte PDF wird direkt zum Download bereitgestellt.
     </p>
 
-    <input type="file" id="file-input" accept="application/pdf">
-    <div class="upload-area" id="upload-area">
-      <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <input type="file" id="file-input" accept="application/pdf" aria-label="PDF-Datei auswählen">
+    <div class="upload-area" id="upload-area"
+         role="button"
+         tabindex="0"
+         aria-label="PDF-Datei auswählen oder hier ablegen">
+      <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
         <polyline points="14,2 14,8 20,8"/>
         <line x1="12" y1="13" x2="12" y2="18"/>
@@ -236,25 +275,28 @@
       <div class="upload-change" id="upload-change">Klicken zum Ändern</div>
     </div>
 
-    <p class="options-label">Analyseoptionen</p>
-    <div class="checkboxes">
-      <label class="checkbox-row">
-        <input type="checkbox" id="summarize">
-        <span>Markiere die wichtigsten Sätze</span>
-      </label>
-      <label class="checkbox-row">
-        <input type="checkbox" id="sentiment">
-        <span>Markiere Sätze mit positiver und negativer Stimmung</span>
-      </label>
-      <label class="checkbox-row">
-        <input type="checkbox" id="ner">
-        <span>Markiere Personen, Orte, Organisationen und andere Namen</span>
-      </label>
-    </div>
+    <fieldset>
+      <legend class="options-label">Analyseoptionen</legend>
+      <div class="checkboxes">
+        <label class="checkbox-row">
+          <input type="checkbox" id="summarize">
+          <span>Markiere die wichtigsten Sätze</span>
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" id="sentiment">
+          <span>Markiere Sätze mit positiver und negativer Stimmung</span>
+        </label>
+        <label class="checkbox-row">
+          <input type="checkbox" id="ner">
+          <span>Markiere Personen, Orte, Organisationen und andere Namen</span>
+        </label>
+      </div>
+    </fieldset>
 
+    <div class="sr-only" id="status-msg" aria-live="polite" aria-atomic="true"></div>
     <button class="btn-primary" id="analyze-btn">PDF analysieren</button>
     <a class="download-link" id="download-link" download>Annotierte PDF herunterladen</a>
-    <p class="error-msg" id="error-msg"></p>
+    <p class="error-msg" id="error-msg" role="alert"></p>
   </div>
 
   <script>
@@ -267,6 +309,7 @@
     const analyzeBtn   = document.getElementById('analyze-btn');
     const downloadLink = document.getElementById('download-link');
     const errorMsg     = document.getElementById('error-msg');
+    const statusMsg    = document.getElementById('status-msg');
     const cbSummarize  = document.getElementById('summarize');
     const cbSentiment  = document.getElementById('sentiment');
     const cbNer        = document.getElementById('ner');
@@ -287,6 +330,9 @@
     let dotTimer = null;
 
     uploadArea.addEventListener('click', () => fileInput.click());
+    uploadArea.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+    });
     fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
 
     uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
@@ -305,6 +351,7 @@
       uploadFilename.textContent = file.name;
       uploadFilename.style.display = 'block';
       uploadChange.style.display = 'block';
+      uploadArea.setAttribute('aria-label', `${file.name} ausgewählt. Klicken zum Ändern.`);
       resetResult();
     }
 
@@ -349,6 +396,7 @@
         downloadLink.href = blobUrl;
         downloadLink.download = match ? match[1] : 'analysiert.pdf';
         downloadLink.style.display = 'block';
+        statusMsg.textContent = 'Analyse abgeschlossen. Annotierte PDF zum Download bereit.';
       } catch (err) {
         showError(err.message);
       } finally {
@@ -358,9 +406,11 @@
 
     function setLoading(on) {
       analyzeBtn.disabled = on;
+      analyzeBtn.setAttribute('aria-busy', on ? 'true' : 'false');
       if (on) {
         let dots = 0;
         analyzeBtn.textContent = 'Analysiere';
+        statusMsg.textContent = 'Analyse läuft, bitte warten.';
         dotTimer = setInterval(() => {
           dots = (dots + 1) % 4;
           analyzeBtn.textContent = 'Analysiere' + '.'.repeat(dots);
