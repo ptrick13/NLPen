@@ -3,7 +3,7 @@
 ![Python](https://img.shields.io/badge/python-3.11-blue?logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-A desktop application that runs multiple NLP pipelines on German PDF documents and saves a colour-coded, annotated copy — built as my Bachelor's thesis project and refactored for publication.
+A web application that runs multiple NLP pipelines on German PDF documents and saves a colour-coded, annotated copy — built as my Bachelor's thesis project and refactored for publication.
 
 ---
 
@@ -45,18 +45,22 @@ Any two modes can be combined. When *Key Sentences* and *Sentiment* are combined
 
 ## Architecture
 
-    nlpen/
-    ├── config.py            # Model names, colours, thresholds — one place to change
-    ├── app.py               # CustomTkinter GUI (class-based, no module globals)
-    ├── pdf/
-    │   ├── extractor.py     # PDF parsing & sentence tokenisation (TextBlobDE)
-    │   └── highlighter.py   # Highlight & legend drawing with PyMuPDF
-    └── nlp/
-        ├── base.py          # Abstract BaseAnalyzer: analyze → annotate → save
-        ├── summarizer.py    # SentenceSummarizer  (TF-IDF + TextRank)
-        ├── sentiment.py     # SentimentAnalyzer   (XLM-RoBERTa)
-        ├── ner.py           # NERAnalyzer         (Flair)
-        └── combined.py      # CombinedAnalyzer    (coordinates two modes)
+    NLPen/
+    ├── app.py                   # FastAPI web application (REST API + static file serving)
+    ├── main.py                  # Entry point — starts the Uvicorn server
+    ├── static/
+    │   └── index.html           # Single-page web UI
+    └── nlpen/
+        ├── config.py            # Model names, colours, thresholds — one place to change
+        ├── pdf/
+        │   ├── extractor.py     # PDF parsing & sentence tokenisation (TextBlobDE)
+        │   └── highlighter.py   # Highlight & legend drawing with PyMuPDF
+        └── nlp/
+            ├── base.py          # Abstract BaseAnalyzer: analyze → annotate → save
+            ├── summarizer.py    # SentenceSummarizer  (TF-IDF + TextRank)
+            ├── sentiment.py     # SentimentAnalyzer   (XLM-RoBERTa)
+            ├── ner.py           # NERAnalyzer         (Flair)
+            └── combined.py      # CombinedAnalyzer    (coordinates two modes)
 
 ---
 
@@ -86,10 +90,12 @@ python -m spacy download de_core_news_md
 python main.py
 ```
 
-1. Click **PDF auswählen** and pick a German-language PDF.
+Then open [http://localhost:8000](http://localhost:8000) in your browser.
+
+1. Drop a German-language PDF onto the upload area (or click to pick a file).
 2. Tick one or two analysis options.
 3. Click **PDF analysieren & downloaden**.
-4. The annotated PDF is saved in the same folder as the source file (e.g. `report_Sentiment.pdf`).
+4. The annotated PDF is downloaded directly — named `<original>_analysiert.pdf`.
 
 ---
 
@@ -103,7 +109,8 @@ This project was developed as part of my Bachelor's thesis on *combined NLP anal
 
 | Library | Role | Version |
 |---------|------|---------|
-| [CustomTkinter](https://customtkinter.tomschimansky.com) | Desktop GUI | 5.2.0 |
+| [FastAPI](https://fastapi.tiangolo.com) | Web framework & REST API | 0.111.0 |
+| [Uvicorn](https://www.uvicorn.org) | ASGI server | 0.29.0 |
 | [PyMuPDF](https://pymupdf.readthedocs.io) | PDF reading & annotation | 1.22.5 |
 | [SpaCy](https://spacy.io) | German lemmatisation & stopwords | 3.6.0 |
 | [scikit-learn](https://scikit-learn.org) | TF-IDF vectorisation | 1.3.0 |
