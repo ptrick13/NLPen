@@ -3,11 +3,8 @@
 import logging
 import re
 
-import nltk
 import fitz
 from textblob_de import TextBlobDE
-
-nltk.download("punkt_tab", quiet=True)
 
 logger = logging.getLogger(__name__)
 

@@ -2,7 +2,10 @@
 
 import logging
 
+import nltk
 import uvicorn
+
+nltk.download("punkt_tab", quiet=True)
 
 logging.basicConfig(
     level=logging.INFO,
