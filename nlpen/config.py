@@ -42,9 +42,3 @@ COLOR_NER_MISC: Final[Color] = (0.7, 0.95, 1.0)   # light blue
 LEGEND_FONT: Final[str] = "Times-Roman"
 LEGEND_FONTSIZE: Final[int] = 12
 LEGEND_Y: Final[int] = 30  # distance from the top of the first page in pts
-
-# ---------------------------------------------------------------------------
-# GUI window defaults
-# ---------------------------------------------------------------------------
-WINDOW_WIDTH: Final[int] = 600
-WINDOW_HEIGHT: Final[int] = 650
