@@ -94,7 +94,7 @@ def _highlight_sentence(sentence: str, doc: fitz.Document, color: Color) -> None
 
     for i in range(doc.page_count):
         page = doc.load_page(i)
-        for rect in page.search_for(sentence):
+        for rect in _merge_line_rects(page.search_for(sentence)):
             _annotate(page, rect, color)
 
 
@@ -118,8 +118,8 @@ def _highlight_entity(
 
     for i in range(doc.page_count):
         page = doc.load_page(i)
-        sent_rects = page.search_for(sentence)
-        ent_rects = page.search_for(entity)
+        sent_rects = _merge_line_rects(page.search_for(sentence))
+        ent_rects = _merge_line_rects(page.search_for(entity))
         for s_rect in sent_rects:
             for e_rect in ent_rects:
                 if s_rect.contains(e_rect):
@@ -135,7 +135,7 @@ def _annotate_text_lines(
     (they sit at the bottom of the preceding page) and ``False`` for the
     first lines on the following page.
     """
-    instances = page.search_for(text)
+    instances = _merge_line_rects(page.search_for(text))
     n_lines = text.count("\n") + 1
     for i in range(n_lines):
         idx = -(i + 1) if reversed_order else i
@@ -154,8 +154,8 @@ def _annotate_entity_in_half(
     reversed_order: bool,
 ) -> None:
     """Highlight *entity* within one half of a cross-page sentence on *page*."""
-    sent_rects = page.search_for(half)
-    ent_rects = page.search_for(entity)
+    sent_rects = _merge_line_rects(page.search_for(half))
+    ent_rects = _merge_line_rects(page.search_for(entity))
     n_lines = half.count("\n") + 1
     for i in range(n_lines):
         idx = -(i + 1) if reversed_order else i
@@ -166,6 +166,29 @@ def _annotate_entity_in_half(
         for e_rect in ent_rects:
             if s_rect.contains(e_rect):
                 _annotate(page, e_rect, color)
+
+
+def _merge_line_rects(rects: list[fitz.Rect]) -> list[fitz.Rect]:
+    """Merge rects that share the same line into one spanning rect.
+
+    Justified text causes search_for to return one rect per word because
+    inter-word gaps don't match a plain space character.  Merging eliminates
+    the visible gaps inside a highlight annotation.
+    """
+    if not rects:
+        return []
+    sorted_rects = sorted(rects, key=lambda r: (r.y0, r.x0))
+    merged = [sorted_rects[0]]
+    for rect in sorted_rects[1:]:
+        last = merged[-1]
+        if abs(rect.y0 - last.y0) < 3:  # same line (< ~1 mm)
+            merged[-1] = fitz.Rect(
+                min(last.x0, rect.x0), min(last.y0, rect.y0),
+                max(last.x1, rect.x1), max(last.y1, rect.y1),
+            )
+        else:
+            merged.append(rect)
+    return merged
 
 
 def _annotate(page: fitz.Page, rect: fitz.Rect, color: Color) -> None:
