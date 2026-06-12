@@ -2,6 +2,7 @@
 
 ![Python](https://img.shields.io/badge/python-3.11-blue?logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
+[![CI](https://github.com/ptrick13/NLPen/actions/workflows/ci.yml/badge.svg)](https://github.com/ptrick13/NLPen/actions/workflows/ci.yml)
 
 A web application that runs multiple NLP pipelines on German PDF documents and saves a colour-coded, annotated copy — built as my Bachelor's thesis project and refactored for publication.
 
@@ -96,6 +97,27 @@ Then open [http://localhost:8000](http://localhost:8000) in your browser.
 2. Tick one or two analysis options.
 3. Click **PDF analysieren & downloaden**.
 4. The annotated PDF is downloaded directly — named `<original>_analysiert.pdf`.
+
+---
+
+## Testing
+
+ML models are never loaded during tests — the classifier, tagger, and SpaCy model are replaced with lightweight stubs so the suite runs in seconds.
+
+```bash
+# Lint
+ruff check .
+
+# Tests (no running databases or API keys required)
+pytest -v
+```
+
+| Test file | What is tested |
+|---|---|
+| `tests/test_extractor.py` | `PAGE_MARKER_PATTERN` regex — page-boundary detection |
+| `tests/test_summarizer.py` | `SentenceSummarizer.rank()` — TF-IDF + PageRank logic |
+| `tests/test_sentiment.py` | `SentimentAnalyzer.analyze()` — label routing and deduplication |
+| `tests/test_ner.py` | `NERAnalyzer.analyze()` — entity type routing using real Flair `Span` objects |
 
 ---
 
