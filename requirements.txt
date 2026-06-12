@@ -12,3 +12,4 @@ accelerate==1.13.0
 flair==0.15.1
 textblob==0.17.1
 textblob-de==0.4.3
+pytest==8.3.5
