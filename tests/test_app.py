@@ -88,3 +88,14 @@ def test_invalid_combination_raises():
     ):
         with pytest.raises(ValueError):
             _build_analyzer(summarize=False, sentiment=False, ner=False)
+
+
+def test_all_three_raises():
+    with (
+        patch("app.SentenceSummarizer"),
+        patch("app.SentimentAnalyzer"),
+        patch("app.NERAnalyzer"),
+        patch("app.CombinedAnalyzer"),
+    ):
+        with pytest.raises(ValueError):
+            _build_analyzer(summarize=True, sentiment=True, ner=True)
