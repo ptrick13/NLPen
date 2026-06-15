@@ -1,4 +1,12 @@
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
-addopts = "--cov=nlpen/nlp/summarizer --cov=nlpen/nlp/sentiment --cov=nlpen/nlp/ner --cov=nlpen/pdf/extractor --cov-report=xml --cov-report=term-missing"
+addopts = "--cov=nlpen --cov-report=xml --cov-report=term-missing"
+
+[tool.coverage.run]
+omit = [
+    "nlpen/nlp/combined.py",
+    "nlpen/pdf/highlighter.py",
+    "app.py",
+    "main.py",
+]
