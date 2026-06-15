@@ -60,7 +60,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Test (pytest)
-        run: pytest -v --cov=nlpen --cov-report=xml
+        run: pytest -v --cov=nlpen/nlp/summarizer --cov=nlpen/nlp/sentiment --cov=nlpen/nlp/ner --cov=nlpen/pdf/extractor --cov-report=xml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
