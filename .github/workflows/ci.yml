@@ -16,14 +16,30 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Ruff
-        run: pip install ruff
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
       - name: Lint (Ruff)
         run: ruff check .
 
       - name: Format check (Ruff)
         run: ruff format --check .
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Type check (mypy)
+        continue-on-error: true
+        run: mypy nlpen/ --ignore-missing-imports
 
   test:
     runs-on: ubuntu-latest

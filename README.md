@@ -110,6 +110,9 @@ ML models are never loaded during tests — the classifier, tagger, and SpaCy mo
 ruff check .
 ruff format --check .
 
+# Type check (non-blocking, annotations are incomplete)
+mypy nlpen/ --ignore-missing-imports
+
 # Tests (no running databases or API keys required)
 pytest -v
 ```
