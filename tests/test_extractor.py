@@ -27,4 +27,6 @@ def test_pattern_sub_removes_marker():
 def test_pattern_matches_all_page_indices():
     for i in range(5):
         text = f"Satz.\n[ENDOFPAGE{i}]\nNächster."
-        assert PAGE_MARKER_PATTERN.search(text) is not None, f"Failed for page index {i}"
+        assert PAGE_MARKER_PATTERN.search(text) is not None, (
+            f"Failed for page index {i}"
+        )

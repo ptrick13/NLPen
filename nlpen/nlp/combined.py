@@ -17,7 +17,12 @@ from nlpen.config import (
     TOP_RATIO_LONG,
     TOP_RATIO_SHORT,
 )
-from nlpen.nlp.ner import NERAnalyzer, NER_LEGEND_TEXT, NER_LEGEND_ITEMS, NER_LEGEND_BASE_X_FROM_RIGHT
+from nlpen.nlp.ner import (
+    NERAnalyzer,
+    NER_LEGEND_TEXT,
+    NER_LEGEND_ITEMS,
+    NER_LEGEND_BASE_X_FROM_RIGHT,
+)
 from nlpen.nlp.sentiment import (
     SentimentAnalyzer,
     SENTIMENT_LEGEND_TEXT,
@@ -87,8 +92,12 @@ class CombinedAnalyzer:
             CombinationMode.NER_AND_SUMMARIZATION,
             CombinationMode.NER_AND_SENTIMENT,
         )
-        self._summarizer: SentenceSummarizer | None = SentenceSummarizer() if needs_summarizer else None
-        self._sentiment: SentimentAnalyzer | None = SentimentAnalyzer() if needs_sentiment else None
+        self._summarizer: SentenceSummarizer | None = (
+            SentenceSummarizer() if needs_summarizer else None
+        )
+        self._sentiment: SentimentAnalyzer | None = (
+            SentimentAnalyzer() if needs_sentiment else None
+        )
         self._ner: NERAnalyzer | None = NERAnalyzer() if needs_ner else None
 
     def run(self, sentences: list[str], pdf_path: str) -> str:
@@ -128,7 +137,12 @@ class CombinedAnalyzer:
         top_negative = [s for s in top if s in sentiment.negative]
         highlight_sentences(top_positive, doc, COLOR_POSITIVE)
         highlight_sentences(top_negative, doc, COLOR_NEGATIVE)
-        add_legend(doc, SENTIMENT_LEGEND_TEXT, SENTIMENT_LEGEND_ITEMS, SENTIMENT_LEGEND_BASE_X_FROM_RIGHT)
+        add_legend(
+            doc,
+            SENTIMENT_LEGEND_TEXT,
+            SENTIMENT_LEGEND_ITEMS,
+            SENTIMENT_LEGEND_BASE_X_FROM_RIGHT,
+        )
 
     def _annotate_ner_summarization(
         self, sentences: list[str], doc: fitz.Document
@@ -146,9 +160,7 @@ class CombinedAnalyzer:
         highlight_sentences(top, doc, COLOR_IMPORTANT)
         add_legend(doc, NER_LEGEND_TEXT, NER_LEGEND_ITEMS, NER_LEGEND_BASE_X_FROM_RIGHT)
 
-    def _annotate_ner_sentiment(
-        self, sentences: list[str], doc: fitz.Document
-    ) -> None:
+    def _annotate_ner_sentiment(self, sentences: list[str], doc: fitz.Document) -> None:
         """Show NER entities overlaid with sentiment highlights."""
         assert self._ner is not None and self._sentiment is not None
         ner = self._ner.analyze(sentences)

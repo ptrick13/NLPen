@@ -72,11 +72,18 @@ class SentimentAnalyzer(BaseAnalyzer):
     def annotate(self, results: SentimentResult, doc: fitz.Document) -> None:
         highlight_sentences(results.positive, doc, COLOR_POSITIVE)
         highlight_sentences(results.negative, doc, COLOR_NEGATIVE)
-        add_legend(doc, SENTIMENT_LEGEND_TEXT, SENTIMENT_LEGEND_ITEMS, SENTIMENT_LEGEND_BASE_X_FROM_RIGHT)
+        add_legend(
+            doc,
+            SENTIMENT_LEGEND_TEXT,
+            SENTIMENT_LEGEND_ITEMS,
+            SENTIMENT_LEGEND_BASE_X_FROM_RIGHT,
+        )
 
     def _clean(self, sentence: str) -> str:
         sentence = PAGE_MARKER_PATTERN.sub("", sentence)
         sentence = re.sub(r"\n", "", sentence)
         tokenizer = self._classifier.tokenizer
-        tokens = tokenizer(sentence, truncation=True, max_length=512, return_tensors=None)
+        tokens = tokenizer(
+            sentence, truncation=True, max_length=512, return_tensors=None
+        )
         return tokenizer.decode(tokens["input_ids"], skip_special_tokens=True)

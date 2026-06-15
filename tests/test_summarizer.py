@@ -37,5 +37,7 @@ def test_rank_deduplicates(summarizer):
 
 
 def test_rank_respects_long_doc_threshold(summarizer):
-    short_result = summarizer.rank(["Satz eins.", "Satz zwei.", "Satz drei."], top_ratio=0.3)
+    short_result = summarizer.rank(
+        ["Satz eins.", "Satz zwei.", "Satz drei."], top_ratio=0.3
+    )
     assert len(short_result) >= 1

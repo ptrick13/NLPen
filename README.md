@@ -107,6 +107,7 @@ ML models are never loaded during tests — the classifier, tagger, and SpaCy mo
 ```bash
 # Lint
 ruff check .
+ruff format --check .
 
 # Tests (no running databases or API keys required)
 pytest -v

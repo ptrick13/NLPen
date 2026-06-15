@@ -62,7 +62,9 @@ async def analyze(
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="{stem}_analysiert.pdf"'},
+        headers={
+            "Content-Disposition": f'attachment; filename="{stem}_analysiert.pdf"'
+        },
     )
 
 

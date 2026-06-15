@@ -41,7 +41,9 @@ class SentenceSummarizer(BaseAnalyzer):
         return spacy.load(SPACY_MODEL)
 
     def analyze(self, sentences: list[str]) -> list[str]:
-        ratio = TOP_RATIO_LONG if len(sentences) > LONG_DOC_THRESHOLD else TOP_RATIO_SHORT
+        ratio = (
+            TOP_RATIO_LONG if len(sentences) > LONG_DOC_THRESHOLD else TOP_RATIO_SHORT
+        )
         return self.rank(sentences, ratio)
 
     def annotate(self, results: list[str], doc: fitz.Document) -> None:

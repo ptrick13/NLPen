@@ -11,9 +11,7 @@ from nlpen.pdf.extractor import PAGE_MARKER_PATTERN
 logger = logging.getLogger(__name__)
 
 
-def highlight_sentences(
-    sentences: list[str], doc: fitz.Document, color: Color
-) -> None:
+def highlight_sentences(sentences: list[str], doc: fitz.Document, color: Color) -> None:
     """Highlight every sentence in *sentences* with *color*."""
     for sentence in sentences:
         _highlight_sentence(sentence, doc, color)
@@ -77,6 +75,7 @@ def save_annotated(doc: fitz.Document, source_path: str, suffix: str) -> str:
 # Private helpers
 # ---------------------------------------------------------------------------
 
+
 def _highlight_sentence(sentence: str, doc: fitz.Document, color: Color) -> None:
     """Highlight all occurrences of *sentence* across the document.
 
@@ -89,7 +88,9 @@ def _highlight_sentence(sentence: str, doc: fitz.Document, color: Color) -> None
         parts = PAGE_MARKER_PATTERN.split(sentence)
         first, second = parts[0].rstrip(), parts[-1]
         _annotate_text_lines(first, doc.load_page(page_no), color, reversed_order=True)
-        _annotate_text_lines(second, doc.load_page(page_no + 1), color, reversed_order=False)
+        _annotate_text_lines(
+            second, doc.load_page(page_no + 1), color, reversed_order=False
+        )
         return
 
     for i in range(doc.page_count):
@@ -112,8 +113,12 @@ def _highlight_entity(
         page_no = int(match.group(1))
         parts = PAGE_MARKER_PATTERN.split(sentence)
         first, second = parts[0].rstrip(), parts[-1]
-        _annotate_entity_in_half(first, entity, doc.load_page(page_no), color, reversed_order=True)
-        _annotate_entity_in_half(second, entity, doc.load_page(page_no + 1), color, reversed_order=False)
+        _annotate_entity_in_half(
+            first, entity, doc.load_page(page_no), color, reversed_order=True
+        )
+        _annotate_entity_in_half(
+            second, entity, doc.load_page(page_no + 1), color, reversed_order=False
+        )
         return
 
     for i in range(doc.page_count):
@@ -183,8 +188,10 @@ def _merge_line_rects(rects: list[fitz.Rect]) -> list[fitz.Rect]:
         last = merged[-1]
         if abs(rect.y0 - last.y0) < 3:  # same line (< ~1 mm)
             merged[-1] = fitz.Rect(
-                min(last.x0, rect.x0), min(last.y0, rect.y0),
-                max(last.x1, rect.x1), max(last.y1, rect.y1),
+                min(last.x0, rect.x0),
+                min(last.y0, rect.y0),
+                max(last.x1, rect.x1),
+                max(last.y1, rect.y1),
             )
         else:
             merged.append(rect)
