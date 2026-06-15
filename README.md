@@ -3,6 +3,7 @@
 ![Python](https://img.shields.io/badge/python-3.11-blue?logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 [![CI](https://github.com/ptrick13/NLPen/actions/workflows/ci.yml/badge.svg)](https://github.com/ptrick13/NLPen/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/ptrick13/NLPen/branch/master/graph/badge.svg)](https://codecov.io/gh/ptrick13/NLPen)
 
 A web application that runs multiple NLP pipelines on German PDF documents and saves a colour-coded, annotated copy — built as my Bachelor's thesis project and refactored for publication.
 
