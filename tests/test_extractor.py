@@ -74,7 +74,11 @@ def test_read_content_no_marker_for_single_page(single_page_pdf):
     assert "[ENDOFPAGE" not in content
 
 
-def test_extract_sentences_returns_list(single_page_pdf):
-    sentences = extract_sentences(single_page_pdf)
-    assert isinstance(sentences, list)
-    assert len(sentences) > 0
+def test_extract_sentences_returns_list(single_page_pdf, monkeypatch):
+    class _MockBlob:
+        sentences = ["Satz eins.", "Satz zwei."]
+
+    monkeypatch.setattr("nlpen.pdf.extractor.TextBlobDE", lambda text: _MockBlob())
+    result = extract_sentences(single_page_pdf)
+    assert isinstance(result, list)
+    assert len(result) > 0
