@@ -1,4 +1,30 @@
-from nlpen.pdf.extractor import PAGE_MARKER_PATTERN
+import fitz
+import pytest
+
+from nlpen.pdf.extractor import PAGE_MARKER_PATTERN, _read_content, extract_sentences
+
+
+@pytest.fixture()
+def single_page_pdf(tmp_path):
+    path = tmp_path / "test.pdf"
+    doc = fitz.open()
+    page = doc.new_page()
+    page.insert_text((72, 100), "Das ist ein Testsatz. Und noch ein weiterer Satz.")
+    doc.save(str(path))
+    doc.close()
+    return str(path)
+
+
+@pytest.fixture()
+def two_page_pdf(tmp_path):
+    path = tmp_path / "two_page.pdf"
+    doc = fitz.open()
+    for _ in range(2):
+        page = doc.new_page()
+        page.insert_text((72, 100), "Ein Satz auf dieser Seite.")
+    doc.save(str(path))
+    doc.close()
+    return str(path)
 
 
 def test_pattern_matches_basic_marker():
@@ -30,3 +56,25 @@ def test_pattern_matches_all_page_indices():
         assert PAGE_MARKER_PATTERN.search(text) is not None, (
             f"Failed for page index {i}"
         )
+
+
+def test_read_content_returns_string(single_page_pdf):
+    content = _read_content(single_page_pdf)
+    assert isinstance(content, str)
+    assert len(content) > 0
+
+
+def test_read_content_inserts_page_marker_between_pages(two_page_pdf):
+    content = _read_content(two_page_pdf)
+    assert "[ENDOFPAGE0]" in content
+
+
+def test_read_content_no_marker_for_single_page(single_page_pdf):
+    content = _read_content(single_page_pdf)
+    assert "[ENDOFPAGE" not in content
+
+
+def test_extract_sentences_returns_list(single_page_pdf):
+    sentences = extract_sentences(single_page_pdf)
+    assert isinstance(sentences, list)
+    assert len(sentences) > 0

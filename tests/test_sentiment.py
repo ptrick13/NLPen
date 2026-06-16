@@ -85,3 +85,21 @@ def test_mixed_labels_populate_both_lists(sentences):
     assert len(result.positive) > 0
     assert len(result.negative) > 0
     assert len(result.positive) + len(result.negative) == len(sentences)
+
+
+def test_clean_strips_marker_and_newline_before_tokenization(positive_analyzer):
+    received: list[str] = []
+
+    class _RecordTokenizer:
+        def __call__(self, text, **kwargs):
+            received.append(text)
+            return {"input_ids": []}
+
+        def decode(self, ids, **kwargs):
+            return ""
+
+    positive_analyzer._classifier.tokenizer = _RecordTokenizer()
+    positive_analyzer._clean("Satz.\n[ENDOFPAGE0]\nNächster Satz.")
+    assert received
+    assert "[ENDOFPAGE" not in received[0]
+    assert "\n" not in received[0]

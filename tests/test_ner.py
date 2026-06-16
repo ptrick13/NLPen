@@ -62,3 +62,13 @@ def test_deduplication(analyzer):
     result = analyzer.analyze([sentence, sentence])
     pairs = [(s, e) for s, e in result.persons if e == "Angela"]
     assert len(pairs) == 1
+
+
+def test_clean_removes_page_marker():
+    cleaned = NERAnalyzer._clean("Satz.\n[ENDOFPAGE0]\nFolgender Satz.")
+    assert "[ENDOFPAGE" not in cleaned
+
+
+def test_clean_removes_newlines():
+    cleaned = NERAnalyzer._clean("Zeile eins.\nZeile zwei.")
+    assert "\n" not in cleaned
