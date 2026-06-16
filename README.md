@@ -1,7 +1,8 @@
 # NLPen — NLP-Based PDF Annotation Tool
 
-![Python](https://img.shields.io/badge/python-3.11-blue?logo=python&logoColor=white)
-![License](https://img.shields.io/badge/license-MIT-green)
+![Python](https://img.shields.io/badge/python-3.11+-blue)
+![License](https://img.shields.io/badge/license-MIT-blue)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![CI](https://github.com/ptrick13/NLPen/actions/workflows/ci.yml/badge.svg)](https://github.com/ptrick13/NLPen/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/ptrick13/NLPen/branch/master/graph/badge.svg)](https://codecov.io/gh/ptrick13/NLPen)
 
